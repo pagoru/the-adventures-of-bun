@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="shortcut icon" type="image/jpg" href="assets/favicon.ico"/>
+    <title>The Adventures of Bun</title>
+    <!-- STYLES_FILE -->
+</head>
+<body></body>
+<script type="text/javascript">
+      window.__env__ = {"ENVIRONMENT":"DEVELOPMENT"}
+    </script>
+<script type="text/javascript" src="/bundle.js"></script>
+<script type="text/javascript">
+const connect = () => {
+  function handleMessage(ws, data) {
+    if (data === "reload") {
+      window.location.reload();
+    }
+  }
+  console.debug("Connecting to Local development server...");
+
+  const retry = () => setTimeout(() => connect(), 100);
+
+  try {
+    let ws = new WebSocket(`ws://${window.location.host}`);
+    ws.onmessage = (m) => handleMessage(ws, m.data);
+    ws.onopen = () => {
+      console.debug("Connected to Local development server!");
+    };
+    ws.onclose = () => retry();
+  } catch (err) {
+    retry();
+  }
+};
+
+connect();
+</script>
+</html>
