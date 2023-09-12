@@ -5,7 +5,7 @@ import { spriteSheet } from "system/render/sprite-sheet";
 import { Size2d } from "libs/types";
 import { ticker } from "./ticker";
 
-const SCALE = 4;
+const SCALE = 6;
 
 export const render = () => {
   let app: PIXI.Application;

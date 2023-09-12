@@ -14,3 +14,5 @@ export * from "./display-object-tint.component";
 export * from "./display-object-event-mode.component";
 export * from "./display-object-isometric-position.component";
 export * from "./display-object-isometric-pivot.component";
+export * from "./display-object-block-position.component";
+export * from "./display-object-chunk-position.component";

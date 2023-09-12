@@ -24,5 +24,5 @@ export enum Entity {
 
   WORLD,
   CHUNK,
-  OBJECT,
+  BLOCK,
 }

@@ -13,3 +13,5 @@ export * from "./display-object-tint.system";
 export * from "./display-object-event-mode.system";
 export * from "./display-object-isometric-position.system";
 export * from "./display-object-isometric-pivot.system";
+export * from "./display-object-block-position.system";
+export * from "./display-object-chunk-position.system";

@@ -1,10 +1,14 @@
 import {
   AnimatedSpriteComponent,
+  BlockComponent,
   CameraComponent,
+  ChunkComponent,
   ContainerComponent,
   DisplayObjectAlphaComponent,
+  DisplayObjectBlockPositionComponent,
   DisplayObjectBoundsComponent,
   DisplayObjectBoundsInteractiveComponent,
+  DisplayObjectChunkPositionComponent,
   DisplayObjectClickBoxComponent,
   DisplayObjectComponent,
   DisplayObjectEventModeComponent,
@@ -57,6 +61,8 @@ export enum Component {
   DISPLAY_OBJECT_ISOMETRIC_POSITION,
   DISPLAY_OBJECT_ISOMETRIC_PIVOT,
   DISPLAY_OBJECT_BOUNDS_INTERACTIVE,
+  DISPLAY_OBJECT_BLOCK_POSITION,
+  DISPLAY_OBJECT_CHUNK_POSITION,
 
   /**************** ENGINE ****************/
   TEXT,
@@ -64,6 +70,9 @@ export enum Component {
   CAMERA,
   STAGE,
   UI_STAGE,
+
+  BLOCK,
+  CHUNK,
 }
 
 export type ComponentTypeMap = {
@@ -99,6 +108,10 @@ export type ComponentTypeMap = {
     DisplayObjectIsometricPivotComponent;
   [Component.DISPLAY_OBJECT_BOUNDS_INTERACTIVE]:
     DisplayObjectBoundsInteractiveComponent;
+  [Component.DISPLAY_OBJECT_BLOCK_POSITION]:
+    DisplayObjectBlockPositionComponent;
+  [Component.DISPLAY_OBJECT_CHUNK_POSITION]:
+    DisplayObjectChunkPositionComponent;
 
   /**************** ENGINE ****************/
   [Component.TEXT]: TextComponent;
@@ -106,4 +119,7 @@ export type ComponentTypeMap = {
   [Component.CAMERA]: CameraComponent;
   [Component.STAGE]: {};
   [Component.UI_STAGE]: {};
+
+  [Component.BLOCK]: BlockComponent;
+  [Component.CHUNK]: ChunkComponent;
 };

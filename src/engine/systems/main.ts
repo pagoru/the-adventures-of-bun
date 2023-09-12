@@ -1,12 +1,16 @@
 import { SystemFunction } from "libs/darker-engine";
 import {
   animatedSpriteSystem,
+  blockSystem,
   cameraSystem,
+  chunkSystem,
   Component,
   containerSystem,
   displayObjectAddPivotSystem,
   displayObjectAlphaSystem,
+  displayObjectBlockPositionSystem,
   displayObjectCenterSystem,
+  displayObjectChunkPositionSystem,
   displayObjectEventModeSystem,
   displayObjectFiltersSystem,
   displayObjectHitBoxSystem,
@@ -23,12 +27,12 @@ import {
   graphicsLineSystem,
   graphicsPolygonSystem,
   particleContainerSystem,
+  splashSystem,
   spriteSystem,
   stageSystem,
   textSystem,
 } from "engine";
 import { sandboxSystem } from "./sandbox.system";
-import { splashSystem } from "engine/systems/stage/splash.system";
 
 export const getSystems = (): SystemFunction<Component>[] => [
   /** PIXI.JS **/
@@ -58,6 +62,8 @@ export const getSystems = (): SystemFunction<Component>[] => [
   displayObjectEventModeSystem,
   displayObjectIsometricPositionSystem,
   displayObjectIsometricPivotSystem,
+  displayObjectBlockPositionSystem,
+  displayObjectChunkPositionSystem,
 
   /** ENGINE **/
   textSystem,
@@ -66,6 +72,8 @@ export const getSystems = (): SystemFunction<Component>[] => [
   stageSystem,
   splashSystem,
 
+  blockSystem,
+  chunkSystem,
   // The last one
   sandboxSystem,
 ];

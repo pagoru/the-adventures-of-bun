@@ -10,7 +10,7 @@ export const _Entity: EntityTypeFunction<
   Props
 > = () => ({
   id: Engine.getUID(),
-  type: Entity.OBJECT,
+  type: Entity.WORLD,
   data: {},
   components: [],
 });

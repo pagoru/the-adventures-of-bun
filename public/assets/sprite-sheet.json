@@ -2,17 +2,31 @@
   "frames": {
     "logo": {
       "frame": { "x": 0, "y": 0, "w": 128, "h": 60 },
-      "rotated": false,
-      "trimmed": true,
-      "sourceSize": { "w": 128, "h": 60 },
-      "duration": 100
+      "sourceSize": { "w": 128, "h": 60 }
     },
     "splash": {
       "frame": { "x": 128, "y": 0, "w": 48, "h": 17 },
-      "rotated": false,
-      "trimmed": true,
-      "sourceSize": { "w": 48, "h": 17 },
-      "duration": 100
+      "sourceSize": { "w": 48, "h": 17 }
+    },
+    "block_dirt": {
+      "frame": { "x": 192, "y": 0, "w": 16, "h": 16 },
+      "sourceSize": { "w": 16, "h": 16 }
+    },
+    "block_grass": {
+      "frame": { "x": 176, "y": 0, "w": 16, "h": 17 },
+      "sourceSize": { "w": 16, "h": 17 }
+    },
+    "s_block_dirt": {
+      "frame": { "x": 224, "y": 0, "w": 16, "h": 12 },
+      "sourceSize": { "w": 16, "h": 12 }
+    },
+    "s_block_grass": {
+      "frame": { "x": 208, "y": 0, "w": 16, "h": 13 },
+      "sourceSize": { "w": 16, "h": 13 }
+    },
+    "xs_block_water": {
+      "frame": { "x": 240, "y": 0, "w": 16, "h": 9 },
+      "sourceSize": { "w": 16, "h": 9 }
     }
   },
   "meta": {
