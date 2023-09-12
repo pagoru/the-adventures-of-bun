@@ -3,17 +3,16 @@ import * as PIXI from "libs/pixi.mjs";
 import { Component, Engine } from "engine";
 import { Utils } from "utils";
 import { System } from "system";
-import { SpriteSheet } from "libs/enums";
 
 export const textSystem: SystemFunction<Component> = async () => {
   //TODO Add cache to prevent destroying background every update.
   const onAddOrUpdate = async (entityId: number) => {
     const entity = Engine.getEntity(entityId);
-    const { text, type, color, backgroundColor, backgroundPadding } = entity
+    const { text, color, backgroundColor, backgroundPadding } = entity
       .getComponent(Component.TEXT);
 
-    const spriteSheet = await System.render.spritesheet.get(SpriteSheet.FONT);
-    const { height } = spriteSheet.textures[`${type}_a`];
+    const spriteSheet = await System.render.spriteSheet.get("font");
+    const { height } = spriteSheet.textures[`a`];
 
     const splittedText = text.split("");
 
@@ -48,7 +47,7 @@ export const textSystem: SystemFunction<Component> = async () => {
       } else {
         const width = splittedText.reduce(
           (total, character) =>
-            spriteSheet.textures[`${type}_${character}`].width + 1 + total,
+            spriteSheet.textures[character].width + 1 + total,
           0,
         );
 
@@ -88,7 +87,7 @@ export const textSystem: SystemFunction<Component> = async () => {
 
     let accumulatedWidth = 1;
     splittedText.forEach((character, index) => {
-      const currentTexture = spriteSheet.textures[`${type}_${character}`];
+      const currentTexture = spriteSheet.textures[character];
       const characterSprite = new PIXI.Sprite(currentTexture);
       characterSprite.tint = isColorAnArray ? color[index][0] : color[0];
       characterSprite.alpha = isColorAnArray ? color[index][1] : color[1];

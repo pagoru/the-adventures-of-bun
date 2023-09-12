@@ -1,0 +1,27 @@
+{ "frames": {
+   "logo": {
+    "frame": { "x": 0, "y": 0, "w": 128, "h": 60 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 60 },
+    "sourceSize": { "w": 512, "h": 512 },
+    "duration": 100
+   },
+   "splash": {
+    "frame": { "x": 128, "y": 0, "w": 48, "h": 17 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 70, "w": 48, "h": 17 },
+    "sourceSize": { "w": 512, "h": 512 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.40-x64",
+  "image": "sprite-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 512, "h": 512 },
+  "scale": "1"
+ }
+}

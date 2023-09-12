@@ -25549,12 +25549,12 @@ ${e2}`);
         imagePath = copySearchParams(imagePath, options.src);
         const assets = await loader.load([imagePath]);
         const texture = assets[imagePath];
-        const spritesheet2 = new Spritesheet(
+        const spritesheet = new Spritesheet(
           texture.baseTexture,
           asset,
           options.src,
         );
-        await spritesheet2.parse();
+        await spritesheet.parse();
         const multiPacks = asset?.meta?.related_multi_packs;
         if (Array.isArray(multiPacks)) {
           const promises = [];
@@ -25575,17 +25575,17 @@ ${e2}`);
             }));
           }
           const res = await Promise.all(promises);
-          spritesheet2.linkedSheets = res;
+          spritesheet.linkedSheets = res;
           res.forEach((item) => {
-            item.linkedSheets = [spritesheet2].concat(
-              spritesheet2.linkedSheets.filter((sp) => sp !== item),
+            item.linkedSheets = [spritesheet].concat(
+              spritesheet.linkedSheets.filter((sp) => sp !== item),
             );
           });
         }
-        return spritesheet2;
+        return spritesheet;
       },
-      unload(spritesheet2) {
-        spritesheet2.destroy(true);
+      unload(spritesheet) {
+        spritesheet.destroy(true);
       },
     },
   };
@@ -27296,22 +27296,23 @@ ${e2}`);
   HTMLText.defaultMaxHeight = 2024;
   HTMLText.defaultAutoResolution = true;
 
-  // src/system/render/spritesheet.ts
-  var spritesheet = () => {
-    const spriteSheetMap = {};
-    const load = async (name) => {
-      const texture = await Texture.fromURL(`./assets/${name}.png`);
-      const sheet = await (await fetch(`./assets/${name}.json`)).json();
-      console.info(`Loading spriteSheet '${name}'`);
-      const spriteSheet = new Spritesheet(texture, sheet);
-      await spriteSheet.parse();
-      spriteSheetMap[name] = spriteSheet;
+  // src/system/render/sprite-sheet.ts
+  var spriteSheet = () => {
+    let spriteSheet2 = {};
+    const SPRITE_LIST = ["sprite-sheet", "font"];
+    const load = async () => {
+      for await (const spriteName of SPRITE_LIST) {
+        const texture = await Texture.fromURL(`./assets/${spriteName}.png`);
+        const sheet = await (await fetch(`./assets/${spriteName}.json`)).json();
+        console.info(`Loading ${spriteName}!`);
+        spriteSheet2[spriteName] = new Spritesheet(texture, sheet);
+        await spriteSheet2[spriteName].parse();
+      }
     };
-    const set = (name, spriteSheet) => spriteSheetMap[name] = spriteSheet;
-    const get = async (name) => spriteSheetMap[name];
+    const get = async (spriteName = "sprite-sheet") => spriteSheet2[spriteName];
     return {
+      load,
       get,
-      set,
     };
   };
 
@@ -27399,11 +27400,11 @@ ${e2}`);
   };
 
   // src/system/render/main.ts
-  var SCALE = 5;
+  var SCALE = 4;
   var render = () => {
     let app;
     let lastFPS = 0;
-    const _spritesheet = spritesheet();
+    const _spritesheet = spriteSheet();
     const _ticker = ticker();
     const load = async () => {
       if (app) {
@@ -27413,7 +27414,7 @@ ${e2}`);
       app = new Application({
         width,
         height,
-        backgroundColor: 1118481,
+        backgroundColor: 16777215,
         antialias: true,
         autoDensity: true,
         sharedTicker: true,
@@ -27425,6 +27426,7 @@ ${e2}`);
       settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = true;
       document.body.appendChild(app.view);
       resizeView();
+      await _spritesheet.load();
       _ticker.load();
     };
     const getBounds = () => {
@@ -27460,7 +27462,7 @@ ${e2}`);
       getBounds,
       getStage,
       getScale,
-      spritesheet: _spritesheet,
+      spriteSheet: _spritesheet,
       ticker: _ticker,
     };
   };
@@ -28109,6 +28111,19 @@ ${e2}`);
     components: [0, /* DISPLAY_OBJECT */ 1 /* CONTAINER */],
   });
 
+  // src/engine/entities/render/sprite.entity.ts
+  var spriteEntity = ({ childOf, ...spriteProps }) => ({
+    id: Engine.getUID(),
+    type: 1, /* SPRITE */
+    data: {
+      [0 /* DISPLAY_OBJECT */]: {
+        childOf,
+      },
+      [2 /* SPRITE */]: spriteProps,
+    },
+    components: [0, /* DISPLAY_OBJECT */ 2 /* SPRITE */],
+  });
+
   // src/engine/entities/render/graphics/graphics-polygon.entity.ts
   var graphicsPolygonEntity = ({ childOf, polygon, color }) => ({
     id: Engine.getUID(),
@@ -28128,6 +28143,28 @@ ${e2}`);
       0, /* DISPLAY_OBJECT */
       5, /* GRAPHICS */
       6, /* GRAPHICS_POLYGON */
+    ],
+  });
+
+  // src/engine/entities/ui/text/text.entity.ts
+  var textEntity = ({ childOf, ...textProps }) => ({
+    id: Engine.getUID(),
+    type: 5, /* TEXT */
+    data: {
+      [0 /* DISPLAY_OBJECT */]: {
+        childOf,
+      },
+      [26 /* TEXT */]: {
+        ...textProps,
+        color: textProps.color || [0, 1],
+        backgroundColor: textProps.backgroundColor,
+        backgroundPadding: textProps.backgroundPadding || 0,
+      },
+    },
+    components: [
+      0, /* DISPLAY_OBJECT */
+      1, /* CONTAINER */
+      26, /* TEXT */
     ],
   });
 
@@ -28173,10 +28210,131 @@ ${e2}`);
   // src/engine/systems/sandbox.system.ts
   var sandboxSystem = async () => {
     const onLoad = async () => {
+      const [stage] = Engine.getEntityListByType(8 /* STAGE */);
+      const [text, text2] = await Engine.addEntity(
+        textEntity({
+          childOf: stage.id,
+          color: [16711935, 1],
+          text: "abcdefghijklmnopqrstuvwxyz0123456789",
+        }),
+        textEntity({
+          childOf: stage.id,
+          text: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        }),
+      );
+      await text.updateComponent(9, /* DISPLAY_OBJECT_POSITION */ {
+        vector2d: {
+          x: -100,
+          y: 0,
+        },
+      });
+      await text2.updateComponent(9, /* DISPLAY_OBJECT_POSITION */ {
+        vector2d: {
+          x: -100,
+          y: 10,
+        },
+      });
     };
     return {
       components: [],
       onLoad,
+    };
+  };
+
+  // src/engine/systems/stage/splash.system.ts
+  var splashSystem = async () => {
+    const onAdd = async (entityId) => {
+      return;
+      const { width, height } = System.render.getBounds();
+      const [container] = await Engine.addEntity(
+        containerEntity({ childOf: entityId }),
+      );
+      await container.updateComponent(14, /* DISPLAY_OBJECT_ZINDEX */ {
+        zIndex: Number.MAX_SAFE_INTEGER,
+      });
+      const [background, splashLogo] = await Engine.addEntity(
+        graphicsPolygonEntity({
+          childOf: container.id,
+          color: 16777215,
+          polygon: Utils.polygon.getRectanglePolygon({ width, height }),
+        }),
+        spriteEntity({
+          childOf: container.id,
+          texture: "splash",
+        }),
+      );
+      await splashLogo.updateComponent(13, /* DISPLAY_OBJECT_ALPHA */ {
+        alpha: 0,
+      });
+      await background.updateComponent(10, /* DISPLAY_OBJECT_PIVOT */ {
+        vector2d: {
+          x: width / 2,
+          y: height / 2,
+        },
+      });
+      const { bounds: logoBounds } = splashLogo.getComponent(
+        8, /* DISPLAY_OBJECT_BOUNDS */
+      );
+      await splashLogo.updateComponent(10, /* DISPLAY_OBJECT_PIVOT */ {
+        vector2d: {
+          x: logoBounds.width / 2,
+          y: logoBounds.height / 2,
+        },
+      });
+      const WAIT_TIME = 3e3;
+      let step = "in";
+      let waitDateTime;
+      System.render.ticker.queue.add({
+        type: 3, /* CUSTOM */
+        dateTime: Date.now(),
+        func: () => {
+          const { alpha } = splashLogo.getComponent(
+            13, /* DISPLAY_OBJECT_ALPHA */
+          );
+          switch (step) {
+            case "in":
+              if (1 > alpha) {
+                splashLogo.updateComponent(13, /* DISPLAY_OBJECT_ALPHA */ {
+                  alpha: alpha + 0.0125,
+                });
+              } else {
+                step = "wait";
+                waitDateTime = Date.now();
+              }
+              return false;
+            case "wait":
+              if (Date.now() > waitDateTime + WAIT_TIME) {
+                step = "out";
+              }
+              return false;
+            case "out":
+              if (0 < alpha) {
+                splashLogo.updateComponent(13, /* DISPLAY_OBJECT_ALPHA */ {
+                  alpha: alpha - 0.0125,
+                });
+              } else {
+                step = "wait2";
+                waitDateTime = Date.now();
+              }
+              return false;
+            case "wait2":
+              if (Date.now() > waitDateTime + WAIT_TIME / 2) {
+                Engine.removeEntity(container.id);
+                return true;
+              }
+              return false;
+          }
+        },
+      });
+    };
+    return {
+      components: [
+        28, /* STAGE */
+        0, /* DISPLAY_OBJECT */
+        9, /* DISPLAY_OBJECT_POSITION */
+        1, /* CONTAINER */
+      ],
+      onAdd,
     };
   };
 
@@ -28212,6 +28370,7 @@ ${e2}`);
     textSystem,
     cameraSystem,
     stageSystem,
+    splashSystem,
     // The last one
     sandboxSystem,
   ];
@@ -28239,9 +28398,8 @@ ${e2}`);
       const { childOf } = entity.getComponent(0 /* DISPLAY_OBJECT */);
       const spriteComponent = entity.getComponent(2 /* SPRITE */);
       const parentContainer = Utils.render.getContainer(childOf);
-      const texture =
-        (await System.render.spritesheet.get(spriteComponent.spriteSheet))
-          .textures[spriteComponent.texture];
+      const texture = (await System.render.spriteSheet.get("sprite-sheet"))
+        .textures[spriteComponent.texture];
       const sprite = new Sprite(texture);
       sprite.name = Utils.render.getDisplayObjectName(id);
       parentContainer.addChild(sprite);
@@ -28282,18 +28440,14 @@ ${e2}`);
     const onAdd = async (entityId) => {
       const entity = Engine.getEntity(entityId);
       const { childOf } = entity.getComponent(0 /* DISPLAY_OBJECT */);
-      const {
-        spritesheet: spritesheet2,
-        animation,
-        animationSpeed,
-        animationStatus,
-      } = entity.getComponent(4 /* ANIMATED_SPRITE */);
+      const { spritesheet, animation, animationSpeed, animationStatus } = entity
+        .getComponent(4 /* ANIMATED_SPRITE */);
       entityAnimatedSpriteRecord[entityId] = {
         animation,
-        spritesheet: spritesheet2,
+        spritesheet,
       };
       const parentContainer = Utils.render.getContainer(childOf);
-      const { animations } = await System.render.spritesheet.get(spritesheet2);
+      const { animations } = await System.render.spriteSheet.get(spritesheet);
       const animatedSprite = new AnimatedSprite(animations[animation]);
       animatedSprite.onComplete = () => {
         entity.updateComponent(4, /* ANIMATED_SPRITE */ {
@@ -28313,25 +28467,19 @@ ${e2}`);
     };
     const onUpdate = async (id) => {
       const entity = Engine.getEntity(id);
-      const {
-        spritesheet: spritesheet2,
-        animation,
-        animationStatus,
-        animationSpeed,
-      } = entity.getComponent(4 /* ANIMATED_SPRITE */);
+      const { spritesheet, animation, animationStatus, animationSpeed } = entity
+        .getComponent(4 /* ANIMATED_SPRITE */);
       const { spritesheet: lastSpritesheetName, animation: lastAnimation } =
         entityAnimatedSpriteRecord[id];
       const animatedSprite = Utils.render.getContainer(id);
-      if (lastSpritesheetName !== spritesheet2 || lastAnimation !== animation) {
-        const { animations } = await System.render.spritesheet.get(
-          spritesheet2,
-        );
+      if (lastSpritesheetName !== spritesheet || lastAnimation !== animation) {
+        const { animations } = await System.render.spriteSheet.get(spritesheet);
         animatedSprite.textures = animations[animation];
       }
       onAddOrUpdate(animatedSprite, animationStatus, animationSpeed);
       entityAnimatedSpriteRecord[id] = {
         animation,
-        spritesheet: spritesheet2,
+        spritesheet,
       };
     };
     const onAddOrUpdate = (animatedSprite, status, animationSpeed) => {
@@ -28496,8 +28644,9 @@ ${e2}`);
       let displayObjectMaskVisible;
       let displayObjectMask;
       if (displayObjectMaskComponent.type === "sprite") {
-        const { spriteSheet, spriteName } = displayObjectMaskComponent;
-        const { textures } = await System.render.spritesheet.get(spriteSheet);
+        const { spriteSheet: spriteSheet2, spriteName } =
+          displayObjectMaskComponent;
+        const { textures } = await System.render.spriteSheet.get(spriteSheet2);
         const texture = textures[spriteName];
         displayObjectMask = new Sprite(texture);
         if (visible) {
@@ -29239,10 +29388,10 @@ void main(void)
   var textSystem = async () => {
     const onAddOrUpdate = async (entityId) => {
       const entity = Engine.getEntity(entityId);
-      const { text, type, color, backgroundColor, backgroundPadding } = entity
+      const { text, color, backgroundColor, backgroundPadding } = entity
         .getComponent(26 /* TEXT */);
-      const spriteSheet = await System.render.spritesheet.get("" /* FONT */);
-      const { height } = spriteSheet.textures[`${type}_a`];
+      const spriteSheet2 = await System.render.spriteSheet.get("font");
+      const { height } = spriteSheet2.textures[`a`];
       const splittedText = text.split("");
       const container = Utils.render.getContainer(entityId);
       if (backgroundColor) {
@@ -29251,7 +29400,7 @@ void main(void)
         } else {
           const width = splittedText.reduce(
             (total, character) =>
-              spriteSheet.textures[`${type}_${character}`].width + 1 + total,
+              spriteSheet2.textures[character].width + 1 + total,
             0,
           );
           const backgroundGraphics = container.getChildByName("background") ||
@@ -29286,7 +29435,7 @@ void main(void)
       const isColorAnArray = Array.isArray(color[0]);
       let accumulatedWidth = 1;
       splittedText.forEach((character, index) => {
-        const currentTexture = spriteSheet.textures[`${type}_${character}`];
+        const currentTexture = spriteSheet2.textures[character];
         const characterSprite = new Sprite(currentTexture);
         characterSprite.tint = isColorAnArray ? color[index][0] : color[0];
         characterSprite.alpha = isColorAnArray ? color[index][1] : color[1];
@@ -29366,9 +29515,6 @@ void main(void)
           y: -vector2d.y,
         },
       });
-      await stageBackground.updateComponent(13, /* DISPLAY_OBJECT_ALPHA */ {
-        alpha: 0.125,
-      });
     };
     const onLoad = async () => {
       const [cameraEntity2] = Engine.getEntityListByType(7 /* CAMERA */);
@@ -29383,7 +29529,7 @@ void main(void)
         graphicsPolygonEntity({
           childOf: stage.id,
           polygon: [0, 0, 100, 0, 100, 100, 0, 100],
-          color: 16711935,
+          color: 3157038,
         }),
       );
       await stageBackground.updateComponent(14, /* DISPLAY_OBJECT_ZINDEX */ {
@@ -29391,9 +29537,6 @@ void main(void)
       });
       stageBackgroundIdMap[entityId] = stageBackground.id;
       await _reDrawPolygon(entityId);
-      System.events.on(0, /* GAME_VIEW_RESIZE */ () => {
-        _reDrawPolygon(entityId);
-      });
       await stageBackground.updateComponent(
         22, /* DISPLAY_OBJECT_EVENT_MODE */
         {
@@ -29531,20 +29674,12 @@ void main(void)
     };
   };
 
-  // src/system/splash.ts
-  var splash = () => {
-    const load = async (isDevelopment) => {
-    };
-    return { load };
-  };
-
   // src/system/main.ts
   var System = (() => {
     const render2 = render();
     const _events = events();
     const _io = io(_events);
     const _production = production();
-    const _splash = splash();
     const load = async () => {
       await _io.load();
       await render2.load();
@@ -29554,7 +29689,6 @@ void main(void)
       if (!isDevelopment) {
         _production.load();
       }
-      await _splash.load(isDevelopment);
       Engine.clear();
       await Engine.setSystems(...getSystems());
       await Engine.load();

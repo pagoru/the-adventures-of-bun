@@ -1,17 +1,17 @@
 import * as PIXI from "libs/pixi.mjs";
 import { System } from "system";
 import { Event } from "libs/enums";
-import { spritesheet } from "./spritesheet";
+import { spriteSheet } from "system/render/sprite-sheet";
 import { Size2d } from "libs/types";
 import { ticker } from "./ticker";
 
-const SCALE = 5;
+const SCALE = 4;
 
 export const render = () => {
   let app: PIXI.Application;
   let lastFPS = 0;
 
-  const _spritesheet = spritesheet();
+  const _spritesheet = spriteSheet();
   const _ticker = ticker();
 
   const load = async () => {
@@ -21,7 +21,7 @@ export const render = () => {
     app = new PIXI.Application({
       width,
       height,
-      backgroundColor: 0x111111,
+      backgroundColor: 0xFFFFFF,
       antialias: true,
       autoDensity: true,
       sharedTicker: true,
@@ -39,6 +39,7 @@ export const render = () => {
 
     resizeView();
 
+    await _spritesheet.load();
     _ticker.load();
   };
 
@@ -87,7 +88,7 @@ export const render = () => {
     getStage,
     getScale,
 
-    spritesheet: _spritesheet,
+    spriteSheet: _spritesheet,
     ticker: _ticker,
   };
 };

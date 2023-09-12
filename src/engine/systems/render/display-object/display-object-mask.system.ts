@@ -21,7 +21,7 @@ export const displayObjectMaskSystem: SystemFunction<Component> = async () => {
     if (displayObjectMaskComponent.type === "sprite") {
       const { spriteSheet, spriteName } = displayObjectMaskComponent;
 
-      const { textures } = await System.render.spritesheet.get(spriteSheet);
+      const { textures } = await System.render.spriteSheet.get(spriteSheet);
 
       const texture = textures[spriteName];
       displayObjectMask = new PIXI.Sprite(texture);

@@ -28,6 +28,7 @@ import {
   textSystem,
 } from "engine";
 import { sandboxSystem } from "./sandbox.system";
+import { splashSystem } from "engine/systems/stage/splash.system";
 
 export const getSystems = (): SystemFunction<Component>[] => [
   /** PIXI.JS **/
@@ -63,6 +64,7 @@ export const getSystems = (): SystemFunction<Component>[] => [
 
   cameraSystem,
   stageSystem,
+  splashSystem,
 
   // The last one
   sandboxSystem,

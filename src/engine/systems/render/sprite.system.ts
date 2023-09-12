@@ -13,7 +13,7 @@ export const spriteSystem: SystemFunction<Component> = async () => {
     const parentContainer = Utils.render.getContainer(childOf);
 
     const texture = (
-      await System.render.spritesheet.get(spriteComponent.spriteSheet)
+      await System.render.spriteSheet.get("sprite-sheet")
     ).textures[spriteComponent.texture];
     const sprite = new PIXI.Sprite(texture);
     sprite.name = Utils.render.getDisplayObjectName(id);

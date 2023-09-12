@@ -21,7 +21,7 @@ export const animatedSpriteSystem: SystemFunction<Component> = async () => {
     };
 
     const parentContainer = Utils.render.getContainer(childOf);
-    const { animations } = await System.render.spritesheet.get(spritesheet);
+    const { animations } = await System.render.spriteSheet.get(spritesheet);
 
     const animatedSprite = new PIXI.AnimatedSprite(animations[animation]);
     animatedSprite.onComplete = () => {
@@ -55,7 +55,7 @@ export const animatedSpriteSystem: SystemFunction<Component> = async () => {
     const animatedSprite = Utils.render.getContainer(id) as PIXI.AnimatedSprite;
 
     if (lastSpritesheetName !== spritesheet || lastAnimation !== animation) {
-      const { animations } = await System.render.spritesheet.get(spritesheet);
+      const { animations } = await System.render.spriteSheet.get(spritesheet);
 
       animatedSprite.textures = animations[animation];
     }

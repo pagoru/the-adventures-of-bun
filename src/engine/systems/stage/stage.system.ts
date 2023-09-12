@@ -8,7 +8,6 @@ import {
   stageEntity,
 } from "engine";
 import { System } from "system";
-import { Event } from "libs/enums";
 
 export const stageSystem: SystemFunction<Component> = async () => {
   const stageBackgroundIdMap: Record<number, number> = {};
@@ -41,9 +40,6 @@ export const stageSystem: SystemFunction<Component> = async () => {
         y: -vector2d.y,
       },
     });
-    await stageBackground.updateComponent(Component.DISPLAY_OBJECT_ALPHA, {
-      alpha: 0.125,
-    });
   };
 
   const onLoad = async () => {
@@ -62,7 +58,7 @@ export const stageSystem: SystemFunction<Component> = async () => {
       graphicsPolygonEntity({
         childOf: stage.id,
         polygon: [0, 0, 100, 0, 100, 100, 0, 100],
-        color: 0xff00ff,
+        color: 0x302c2e,
       }),
     );
     await stageBackground.updateComponent(Component.DISPLAY_OBJECT_ZINDEX, {
@@ -72,17 +68,9 @@ export const stageSystem: SystemFunction<Component> = async () => {
 
     await _reDrawPolygon(entityId);
 
-    System.events.on(Event.GAME_VIEW_RESIZE, () => {
-      _reDrawPolygon(entityId);
-    });
-
     await stageBackground.updateComponent(Component.DISPLAY_OBJECT_EVENT_MODE, {
       eventMode: DisplayObjectEventMode.STATIC,
     });
-    // Utils.render.addEventListener(stageBackground.id, 'click', e => {
-    // 	console.log('click stage');
-    // 	// e.stopPropagation();
-    // });
   };
 
   const onUpdate = async (entityId: number, component: Component) => {
