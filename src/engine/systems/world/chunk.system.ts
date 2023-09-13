@@ -1,16 +1,48 @@
 import { SystemFunction } from "libs/darker-engine";
 import { blockEntity, Component, Engine } from "engine";
+import { Utils } from "utils";
+import { CHUNK_SIZE } from "libs/consts";
 import { Block } from "libs/enums";
 
 export const chunkSystem: SystemFunction<Component> = async () => {
   const onAdd = async (entityId: number) => {
+    const entity = Engine.getEntity(entityId);
+    const { vector2d } = entity.getComponent(
+      Component.DISPLAY_OBJECT_CHUNK_POSITION,
+    );
+
+    const chunkName = `${vector2d.x}-${vector2d.y}`;
+
+    const data = await fetch(`/assets/map/${chunkName}.chunk`).then((data) =>
+      data.text()
+    );
+
+    const lineData = data.split("\r\n");
+    const chunkData = Utils.array.getNew(lineData.length / (CHUNK_SIZE + 1))
+      .map((y) =>
+        Utils.array.getNew(CHUNK_SIZE).map((z) =>
+          lineData[(y * (CHUNK_SIZE + 1)) + z + 1].split(",").map((num) =>
+            parseInt(num)
+          )
+        )
+      );
+
     const blockList = [];
     for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 8; x++) {
-        for (let z = 0; z < 8; z++) {
+      const yData = chunkData[y];
+      if (!yData) continue;
+
+      for (let z = 0; z < 8; z++) {
+        const zData = yData[z];
+        if (!zData) continue;
+
+        for (let x = 0; x < 8; x++) {
+          const currentBlockType = zData[x];
+          if (currentBlockType === undefined) continue;
+
           blockList.push(blockEntity({
             childOf: entityId,
-            type: Block.DIRT,
+            type: currentBlockType as Block,
             vector3d: {
               x: x,
               y: (y * 4),

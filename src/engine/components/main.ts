@@ -29,6 +29,7 @@ import {
   ParticleContainerComponent,
   SpriteComponent,
   TextComponent,
+  WorldComponent,
 } from "engine";
 
 export enum Component {
@@ -73,6 +74,7 @@ export enum Component {
 
   BLOCK,
   CHUNK,
+  WORLD,
 }
 
 export type ComponentTypeMap = {
@@ -122,4 +124,5 @@ export type ComponentTypeMap = {
 
   [Component.BLOCK]: BlockComponent;
   [Component.CHUNK]: ChunkComponent;
+  [Component.WORLD]: WorldComponent;
 };

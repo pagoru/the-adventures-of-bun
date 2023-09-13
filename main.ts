@@ -8,7 +8,7 @@ await webServe({
   port: 8080,
   indexFileName: "main.ts",
   minify: false,
-  openBrowser: false,
+  openBrowser: true,
   externals: [],
   bundleAssets: false,
   envs: ["ENVIRONMENT"],

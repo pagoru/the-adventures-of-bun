@@ -20,9 +20,9 @@ export const chunkEntity: EntityTypeFunction<
   Component,
   ComponentTypeMap,
   Props
-> = ({ childOf, vector3d }) => ({
+> = ({ childOf, vector2d }) => ({
   id: Engine.getUID(),
-  type: Entity.BLOCK,
+  type: Entity.CHUNK,
   data: {
     [Component.DISPLAY_OBJECT]: {
       childOf,
@@ -31,7 +31,7 @@ export const chunkEntity: EntityTypeFunction<
       maxSize: CHUNK_SIZE * CHUNK_SIZE * (CHUNK_SIZE * 4),
     },
     [Component.DISPLAY_OBJECT_CHUNK_POSITION]: {
-      vector3d,
+      vector2d,
     },
     [Component.CHUNK]: {},
   },

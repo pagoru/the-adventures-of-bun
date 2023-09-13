@@ -7,13 +7,13 @@ export const displayObjectChunkPositionSystem: SystemFunction<
 > = async () => {
   const onAdd = async (entityId: number) => {
     const entity = Engine.getEntity(entityId);
-    const { vector3d } = entity.getComponent(
+    const { vector2d } = entity.getComponent(
       Component.DISPLAY_OBJECT_CHUNK_POSITION,
     );
-    if (!vector3d) return;
+    if (!vector2d) return;
 
-    const isometricVector3d = Utils.vector.chunk.getVector3dFromChunkVector3d(
-      vector3d,
+    const isometricVector3d = Utils.vector.chunk.getVector3dFromChunkVector2d(
+      vector2d,
     );
     await entity.updateComponent(Component.DISPLAY_OBJECT_ISOMETRIC_POSITION, {
       vector3d: isometricVector3d,

@@ -31,6 +31,7 @@ import {
   spriteSystem,
   stageSystem,
   textSystem,
+  worldSystem,
 } from "engine";
 import { sandboxSystem } from "./sandbox.system";
 
@@ -74,6 +75,7 @@ export const getSystems = (): SystemFunction<Component>[] => [
 
   blockSystem,
   chunkSystem,
+  worldSystem,
   // The last one
   sandboxSystem,
 ];
