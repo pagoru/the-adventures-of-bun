@@ -11,20 +11,20 @@ export const chunkSystem: SystemFunction<Component> = async () => {
       Component.DISPLAY_OBJECT_CHUNK_POSITION,
     );
 
-    const chunkName = `${vector2d.x}-${vector2d.y}`;
+    const chunkName = `${vector2d.x}_${vector2d.y}`;
 
     const data = await fetch(`/assets/map/${chunkName}.chunk`).then((data) =>
       data.text()
     );
 
-    const lineData = data.split("\r\n");
+    const lineData = data.replace('\r', '').split("\n");
     const chunkData = Utils.array.getNew(lineData.length / (CHUNK_SIZE + 1))
       .map((y) =>
-        Utils.array.getNew(CHUNK_SIZE).map((z) =>
+        Utils.array.transpose(Utils.array.getNew(CHUNK_SIZE).map((z) =>
           lineData[(y * (CHUNK_SIZE + 1)) + z + 1].split(",").map((num) =>
             parseInt(num)
           )
-        )
+        ))
       );
 
     const blockList = [];
@@ -38,7 +38,7 @@ export const chunkSystem: SystemFunction<Component> = async () => {
 
         for (let x = 0; x < 8; x++) {
           const currentBlockType = zData[x];
-          if (currentBlockType === undefined) continue;
+          if (currentBlockType === undefined || !Block[currentBlockType]) continue;
 
           blockList.push(blockEntity({
             childOf: entityId,

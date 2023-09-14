@@ -16,7 +16,6 @@ export const worldSystem: SystemFunction<Component> = async () => {
   const onAdd = async (entityId: number) => {
     const entity = Engine.getEntity(entityId);
     const { chunks } = entity.getComponent(Component.WORLD);
-    console.log(chunks);
 
     await Engine.addEntity(
       ...chunks.map((vector2d) => chunkEntity({ childOf: entityId, vector2d })),
