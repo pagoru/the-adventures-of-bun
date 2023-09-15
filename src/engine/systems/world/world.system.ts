@@ -1,5 +1,5 @@
 import { SystemFunction } from "libs/darker-engine";
-import { chunkEntity, Component, Engine, Entity, worldEntity } from "engine";
+import {chunkEntity, Component, Engine, Entity, spriteEntity, worldEntity} from "engine";
 
 export const worldSystem: SystemFunction<Component> = async () => {
   const onLoad = async () => {
@@ -20,6 +20,26 @@ export const worldSystem: SystemFunction<Component> = async () => {
     await Engine.addEntity(
       ...chunks.map((vector2d) => chunkEntity({ childOf: entityId, vector2d })),
     );
+    
+    await Engine.addEntity(
+      spriteEntity({
+        childOf: entityId,
+        texture: 'player_idle_1'
+      })
+    )
+    
+    const [hand] = await Engine.addEntity(
+      spriteEntity({
+        childOf: entityId,
+        texture: 'hand_grab'
+      })
+    )
+    await hand.updateComponent(Component.DISPLAY_OBJECT_POSITION, {
+      vector2d: {
+        y: -55,
+        x: 0
+      }
+    })
   };
 
   return {
